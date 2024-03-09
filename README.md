@@ -1,5 +1,5 @@
 # Paid Greeter
-This is a modification of the greeter project showcased in the [start building dApps on ink!](https://www.eventbrite.co.uk/e/827155583617?aff=oddtdtcreator) workshop. 
+This is a modification of the greeter project showcased in the [start building dApps on ink!](https://encodeclub.notion.site/Start-building-dApps-on-ink-a1b0072e07574dc0916ea66658854163) workshop. 
 
 ## Modification
 - Callers have to pay a small amount to write a message to the contract
