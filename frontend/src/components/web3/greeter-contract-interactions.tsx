@@ -32,6 +32,7 @@ export const GreeterContractInteractions: FC = () => {
   const { typedContract } = useRegisteredTypedContract(ContractIds.Greeter, GreeterContract)
   const [greeterMessage, setGreeterMessage] = useState<string>()
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>()
+  const [lockState, setLockState] = useState<boolean>(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   })
@@ -49,6 +50,15 @@ export const GreeterContractInteractions: FC = () => {
       if (isError) throw new Error(decodedOutput)
       setGreeterMessage(output)
 
+      const resultLock = await contractQuery(api, '', contract, 'getLockState')
+      const {
+        output: outputLock,
+        isError: isErrorLock,
+        decodedOutput: decodedOutputLock,
+      } = decodeOutput(resultLock, contract, 'getLockState')
+      if (isErrorLock) throw new Error(decodedOutputLock)
+      setLockState(outputLock)
+
       // Alternatively: Fetch it with typed contract instance
       const typedResult = await typedContract.query.greet()
       console.log('Result from typed contract: ', typedResult.value)
@@ -64,6 +74,23 @@ export const GreeterContractInteractions: FC = () => {
     fetchGreeting()
   }, [typedContract])
 
+  // Fetch Locked State
+  const getLockState = async () => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    try {
+      await contractTxWithToast(api, activeAccount.address, contract, 'getLockState', {}, [])
+      reset()
+    } catch (e) {
+      console.error(e)
+    } finally {
+      fetchGreeting()
+    }
+  }
+
   // Update Greeting
   const updateGreeting: SubmitHandler<z.infer<typeof formSchema>> = async ({ newMessage }) => {
     if (!activeAccount || !contract || !activeSigner || !api) {
@@ -74,7 +101,26 @@ export const GreeterContractInteractions: FC = () => {
     try {
       await contractTxWithToast(api, activeAccount.address, contract, 'setMessage', {}, [
         newMessage,
+        100,
       ])
+      reset()
+    } catch (e) {
+      console.error(e)
+    } finally {
+      getLockState()
+      fetchGreeting()
+    }
+  }
+
+  // Unlock Contract
+  const unlockContract = async () => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    try {
+      await contractTxWithToast(api, activeAccount.address, contract, 'unlock', {}, [1000])
       reset()
     } catch (e) {
       console.error(e)
@@ -99,6 +145,13 @@ export const GreeterContractInteractions: FC = () => {
                 <FormControl>
                   <Input
                     placeholder={fetchIsLoading || !contract ? 'Loading…' : greeterMessage}
+                    disabled={true}
+                  />
+                </FormControl>
+                <FormLabel className="text-base">Fetched Lock State</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={fetchIsLoading || !contract ? 'Loading…' : String(lockState)}
                     disabled={true}
                   />
                 </FormControl>
@@ -133,6 +186,15 @@ export const GreeterContractInteractions: FC = () => {
             </CardContent>
           </Card>
         </Form>
+        {/* Unlock Contract */}
+        <Button
+          onClick={unlockContract}
+          className="bg-primary font-bold"
+          disabled={fetchIsLoading || form.formState.isSubmitting}
+          isLoading={form.formState.isSubmitting}
+        >
+          Unlock Contract
+        </Button>
 
         {/* Contract Address */}
         <p className="text-center font-mono text-xs text-gray-600">

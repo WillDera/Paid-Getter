@@ -38,6 +38,17 @@ export default class Methods {
 	}
 
 	/**
+	* getBalance
+	*
+	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
+	*/
+	"getBalance" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "getBalance", [], __options, (result) => { return handleReturnType(result, getTypeDescription(6, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
 	* greet
 	*
 	* @returns { Result<string, ReturnTypes.LangError> }
@@ -45,22 +56,50 @@ export default class Methods {
 	"greet" (
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<string, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "greet", [], __options, (result) => { return handleReturnType(result, getTypeDescription(4, DATA_TYPE_DESCRIPTIONS)); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "greet", [], __options, (result) => { return handleReturnType(result, getTypeDescription(8, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
 	* setMessage
 	*
-	* @param { string } newValue,
+	* @param { string } newMessage,
+	* @param { (string | number | BN) } value,
 	* @returns { void }
 	*/
 	"setMessage" (
-		newValue: string,
-		__options: GasLimit,
+		newMessage: string,
+		value: (string | number | BN),
+		__options: GasLimitAndRequiredValue,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "setMessage", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [newValue], __options);
+		}, [newMessage, value], __options);
+	}
+
+	/**
+	* getLockState
+	*
+	* @returns { Result<boolean, ReturnTypes.LangError> }
+	*/
+	"getLockState" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<boolean, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "getLockState", [], __options, (result) => { return handleReturnType(result, getTypeDescription(12, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* unlock
+	*
+	* @param { (string | number | BN) } value,
+	* @returns { void }
+	*/
+	"unlock" (
+		value: (string | number | BN),
+		__options: GasLimitAndRequiredValue,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "unlock", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [value], __options);
 	}
 
 }

@@ -21,6 +21,16 @@ export default class Methods {
 		this.__apiPromise = apiPromise;
 	}
 	/**
+	 * getBalance
+	 *
+	*/
+	"getBalance" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "getBalance", [], __options);
+	}
+
+	/**
 	 * greet
 	 *
 	*/
@@ -33,13 +43,37 @@ export default class Methods {
 	/**
 	 * setMessage
 	 *
-	 * @param { string } newValue,
+	 * @param { string } newMessage,
+	 * @param { (string | number | BN) } value,
 	*/
 	"setMessage" (
-		newValue: string,
+		newMessage: string,
+		value: (string | number | BN),
+		__options: GasLimitAndRequiredValue,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "setMessage", [newMessage, value], __options);
+	}
+
+	/**
+	 * getLockState
+	 *
+	*/
+	"getLockState" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "setMessage", [newValue], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "getLockState", [], __options);
+	}
+
+	/**
+	 * unlock
+	 *
+	 * @param { (string | number | BN) } value,
+	*/
+	"unlock" (
+		value: (string | number | BN),
+		__options: GasLimitAndRequiredValue,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "unlock", [value], __options);
 	}
 
 }

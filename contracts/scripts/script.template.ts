@@ -30,7 +30,7 @@ const main = async () => {
 
   // Update message
   try {
-    await contractTx(api, account, contract, 'set_message', {}, ['Hello, script!'])
+    await contractTx(api, account, contract, 'set_message', {}, ['Hello, script!', false, 0])
     console.log('\nSuccessfully updated greeting')
   } catch (error) {
     console.error('Error while updating greeting', error)

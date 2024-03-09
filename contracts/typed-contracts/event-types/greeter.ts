@@ -6,3 +6,7 @@ export interface Greeted {
 	message: string;
 }
 
+export interface Locked {
+	message: string;
+}
+

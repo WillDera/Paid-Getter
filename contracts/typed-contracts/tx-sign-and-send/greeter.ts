@@ -29,6 +29,18 @@ export default class Methods {
 	}
 
 	/**
+	* getBalance
+	*
+	*/
+	"getBalance" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "getBalance", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
 	* greet
 	*
 	*/
@@ -43,15 +55,43 @@ export default class Methods {
 	/**
 	* setMessage
 	*
-	* @param { string } newValue,
+	* @param { string } newMessage,
+	* @param { (string | number | BN) } value,
 	*/
 	"setMessage" (
-		newValue: string,
-		__options ? : GasLimit,
+		newMessage: string,
+		value: (string | number | BN),
+		__options ? : GasLimitAndRequiredValue,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "setMessage", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [newValue], __options);
+		}, [newMessage, value], __options);
+	}
+
+	/**
+	* getLockState
+	*
+	*/
+	"getLockState" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "getLockState", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* unlock
+	*
+	* @param { (string | number | BN) } value,
+	*/
+	"unlock" (
+		value: (string | number | BN),
+		__options ? : GasLimitAndRequiredValue,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "unlock", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [value], __options);
 	}
 
 }
